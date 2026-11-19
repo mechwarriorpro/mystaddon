@@ -11,7 +11,10 @@ authors="${mod_authors}"
 description='''${mod_description}
 
 Detects modded ores (by name and the c:ores tag), modded fluids and modded structures,
-and adds them as pages on Mystcraft Reborn Descriptive Books for those generation types.'''
+and adds them as pages on Mystcraft Reborn Descriptive Books for those generation types.
+Also adds effect pages for Ages: gravity (incl. random), loot abundance, tick speed,
+weather and peaceful.'''
+
 
 [[dependencies.${mod_id}]]
 modId="neoforge"
