@@ -1,0 +1,19 @@
+# Gradle / build outputs
+.gradle/
+build/
+run/
+out/
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db
