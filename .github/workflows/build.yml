@@ -20,10 +20,22 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: 8.10.2
+          # ModDevGradle 2.x requires Gradle 9.x (same as the reference port's wrapper)
+          gradle-version: 9.2.1
 
       - name: Build with Gradle
-        run: gradle build --no-daemon --stacktrace
+        run: |
+          set -o pipefail
+          gradle build --no-daemon --stacktrace 2>&1 | tee build.log
+
+      # Post the log tail as a commit comment so failures are visible via the API.
+      - name: Report build failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          { echo '#### Gradle build failed — log tail:'; echo '```'; tail -n 150 build.log; echo '```'; } > /tmp/body.md
+          gh api -X POST repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/comments -f body="$(cat /tmp/body.md)"
 
       - uses: actions/upload-artifact@v4
         if: always()
