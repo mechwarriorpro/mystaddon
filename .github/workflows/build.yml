@@ -80,8 +80,8 @@ jobs:
             --title "MystPages $VERSION" \
             --notes "MystPages $VERSION — NeoForge 1.21.1 addon for Mystcraft Reborn (mystcraft_reborn).
 
-- Detects modded ores, fluids and structures and adds them as pages on Descriptive Books.
-- Sable sub-level portal compatibility (portals on sub-levels, players on sub-levels through portals).
+            - Detects modded ores, fluids and structures and adds them as pages on Descriptive Books.
+            - Sable sub-level portal compatibility (portals on sub-levels, players on sub-levels through portals).
 
-Built with Gradle 9.2.1 + ModDevGradle on JDK 21 against MC 1.21.1 / NeoForge 21.1.68." \
+            Built with Gradle 9.2.1 + ModDevGradle on JDK 21 against MC 1.21.1 / NeoForge 21.1.68." \
             --latest
