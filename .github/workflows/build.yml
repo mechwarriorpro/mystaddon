@@ -67,17 +67,19 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -o pipefail
+          TARGET_ARGS=""
           if [[ "$GITHUB_REF" == refs/tags/* ]]; then
             VERSION="${GITHUB_REF_NAME}"
-            TARGET="$GITHUB_REF_NAME"
+            # For tag events the release target defaults to the tag's commit;
+            # passing the tag name as --target is rejected (target_commitish invalid).
           else
             VERSION="v$(grep '^mod_version=' gradle.properties | cut -d= -f2)"
-            TARGET="$GITHUB_SHA"
+            TARGET_ARGS="--target $GITHUB_SHA"
           fi
-          echo "Releasing $VERSION (target $TARGET)"
+          echo "Releasing $VERSION $TARGET_ARGS"
           ls -la dist/
           gh release create "$VERSION" dist/*.jar \
-            --target "$TARGET" \
+            $TARGET_ARGS \
             --title "MystPages $VERSION" \
             --notes "MystPages $VERSION — NeoForge 1.21.1 addon for Mystcraft Reborn (mystcraft_reborn).
 
