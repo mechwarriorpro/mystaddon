@@ -121,7 +121,7 @@ public final class AgeEffects {
         if (!tickSpeed.isEmpty()) {
             int percent = parsePercent(PageType.TICKSPEED.valueOf(tickSpeed.get(0)), 100);
             int scaled = Math.max(0, Math.round(3 * percent / 100.0f)); // vanilla default random tick speed is 3
-            level.getGameRules().set(GameRules.RULE_RANDOMTICKPEED, scaled, level.getServer());
+            level.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).set(scaled, level.getServer());
             MystPages.LOGGER.info("MystPages: Age {} random tick speed set to {} ({}%)", dim, scaled, percent);
         }
     }
@@ -136,7 +136,7 @@ public final class AgeEffects {
         }
     }
 
-    static int parsePercent(String value, int fallback) {
+    public static int parsePercent(String value, int fallback) {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {

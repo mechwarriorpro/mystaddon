@@ -40,7 +40,7 @@ jobs:
           echo "::group::Gradle log tail"
           tail -n 120 build.log
           echo "::endgroup::"
-          while IFS= read -r line; do echo "::error ::$line"; done < <(grep -iE "what went wrong|could not|error|failure|caused by" build.log | tail -n 40)
+          while IFS= read -r line; do echo "::error ::$line"; done < <(grep -iE -A2 "what went wrong|could not|error|failure|caused by" build.log | tail -n 60)
 
       - uses: actions/upload-artifact@v4
         if: always()
