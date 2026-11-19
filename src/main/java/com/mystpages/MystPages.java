@@ -43,6 +43,10 @@ public final class MystPages {
     public static final DeferredRegister.DataComponents COMPONENTS =
             DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, MOD_ID);
 
+    /** Serializer registry for global loot modifiers (the "loot" page effect). */
+    public static final DeferredRegister<com.mojang.serialization.MapCodec<? extends net.neoforged.neoforge.common.loot.IGlobalLootModifier>> LOOT_MODIFIERS =
+            DeferredRegister.create(net.neoforged.neoforge.registries.NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MOD_ID);
+
     public MystPages(IEventBus modEventBus, ModContainer modContainer) {
         modContainer.registerConfig(ModConfig.Type.COMMON, AddonConfig.SPEC);
         COMPONENTS.register(modEventBus);
@@ -58,6 +62,15 @@ public final class MystPages {
         NeoForge.EVENT_BUS.addListener(AgeGenerationBridge::onLevelLoad);
         NeoForge.EVENT_BUS.addListener(AgeGenerationBridge::onChunkLoad);
         NeoForge.EVENT_BUS.addListener(MystPagesCommands::onItemTooltip);
+
+        // Value-based page effects (gravity / weather / tick speed / peaceful).
+        NeoForge.EVENT_BUS.addListener(com.mystpages.worldgen.AgeEffects::onEntityTick);
+        NeoForge.EVENT_BUS.addListener(com.mystpages.worldgen.AgeEffects::onLevelLoad);
+        NeoForge.EVENT_BUS.addListener(com.mystpages.worldgen.AgeEffects::onEntityJoinLevel);
+
+        // Global loot modifier backing the "loot" page (chest + ore/mob drops).
+        LOOT_MODIFIERS.register("loot_abundance", () -> com.mystpages.loot.LootAbundanceModifier.CODEC);
+        LOOT_MODIFIERS.register(modEventBus);
 
         // Sable sub-level portal compatibility (no-op unless the sable mod is loaded).
         if (ModList.get().isLoaded("sable") && SableBridge.isSableLoaded()) {

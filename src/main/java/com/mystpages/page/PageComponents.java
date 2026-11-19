@@ -29,6 +29,31 @@ public final class PageComponents {
                     .persistent(Codec.list(ResourceLocation.CODEC))
                     .networkSynchronized(ByteBufCodecs.fromCodec(Codec.list(ResourceLocation.CODEC))));
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ResourceLocation>>> GRAVITY_PAGES =
+            MystPages.COMPONENTS.registerComponentType("gravity_pages", builder -> builder
+                    .persistent(Codec.list(ResourceLocation.CODEC))
+                    .networkSynchronized(ByteBufCodecs.fromCodec(Codec.list(ResourceLocation.CODEC))));
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ResourceLocation>>> LOOT_PAGES =
+            MystPages.COMPONENTS.registerComponentType("loot_pages", builder -> builder
+                    .persistent(Codec.list(ResourceLocation.CODEC))
+                    .networkSynchronized(ByteBufCodecs.fromCodec(Codec.list(ResourceLocation.CODEC))));
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ResourceLocation>>> TICKSPEED_PAGES =
+            MystPages.COMPONENTS.registerComponentType("tickspeed_pages", builder -> builder
+                    .persistent(Codec.list(ResourceLocation.CODEC))
+                    .networkSynchronized(ByteBufCodecs.fromCodec(Codec.list(ResourceLocation.CODEC))));
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ResourceLocation>>> WEATHER_PAGES =
+            MystPages.COMPONENTS.registerComponentType("weather_pages", builder -> builder
+                    .persistent(Codec.list(ResourceLocation.CODEC))
+                    .networkSynchronized(ByteBufCodecs.fromCodec(Codec.list(ResourceLocation.CODEC))));
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ResourceLocation>>> PEACEFUL_PAGES =
+            MystPages.COMPONENTS.registerComponentType("peaceful_pages", builder -> builder
+                    .persistent(Codec.list(ResourceLocation.CODEC))
+                    .networkSynchronized(ByteBufCodecs.fromCodec(Codec.list(ResourceLocation.CODEC))));
+
     private PageComponents() {}
 
     /** Called from the mod constructor so the static holders are registered. */
@@ -41,6 +66,11 @@ public final class PageComponents {
             case ORE -> ORE_PAGES;
             case FLUID -> FLUID_PAGES;
             case STRUCTURE -> STRUCTURE_PAGES;
+            case GRAVITY -> GRAVITY_PAGES;
+            case LOOT -> LOOT_PAGES;
+            case TICKSPEED -> TICKSPEED_PAGES;
+            case WEATHER -> WEATHER_PAGES;
+            case PEACEFUL -> PEACEFUL_PAGES;
         };
     }
 }

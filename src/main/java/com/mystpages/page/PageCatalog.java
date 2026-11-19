@@ -70,8 +70,11 @@ public final class PageCatalog {
         }
     }
 
-    /** All detected page target ids for the given type. */
+    /** All detected page target ids for the given type (fixed list for value-based types). */
     public static List<ResourceLocation> of(PageType type) {
+        if (type.isValueBased()) {
+            return type.defaultPages();
+        }
         scanAll();
         return CATALOG.getOrDefault(type, List.of());
     }

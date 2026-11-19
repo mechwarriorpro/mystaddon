@@ -20,10 +20,15 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
  * {@code /mystpages} — manage pages on the held Descriptive Book and inspect the catalog:
  *
  * <pre>
- * /mystpages add &lt;ore|fluid|structure&gt; &lt;id&gt;     add a page to the held book
- * /mystpages remove &lt;ore|fluid|structure&gt; &lt;id&gt;  remove a page from the held book
- * /mystpages list &lt;ore|fluid|structure&gt;           pages currently on the held book
- * /mystpages catalog &lt;ore|fluid|structure&gt;        all detected pages of that type
+ * /mystpages add &lt;type&gt; &lt;id&gt;     add a page to the held book
+ * /mystpages remove &lt;type&gt; &lt;id&gt;  remove a page from the held book
+ * /mystpages list &lt;type&gt;           pages currently on the held book
+ * /mystpages catalog &lt;type&gt;        all available pages of that type
+ *
+ * types: ore, fluid, structure (registry-detected ids)
+ *        gravity (down/up/north/south/east/west/random), loot (0..500 %),
+ *        tickspeed (50..300 %), weather (clear/rain/thunder), peaceful (on)
+ *        value-based ids look like mystpages:loot_150 — see /mystpages catalog &lt;type&gt;
  * </pre>
  */
 public final class MystPagesCommands {
@@ -54,7 +59,8 @@ public final class MystPagesCommands {
     private static PageType parseType(CommandContext<CommandSourceStack> ctx, String raw) {
         PageType type = PageType.fromCommandName(raw);
         if (type == null) {
-            ctx.getSource().sendFailure(Component.literal("Unknown page type '" + raw + "' (expected ore, fluid or structure)."));
+            String names = java.util.Arrays.stream(PageType.values()).map(PageType::commandName).reduce((a, b) -> a + ", " + b).orElse("");
+            ctx.getSource().sendFailure(Component.literal("Unknown page type '" + raw + "' (expected one of: " + names + ")."));
         }
         return type;
     }
