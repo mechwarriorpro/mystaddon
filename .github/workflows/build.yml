@@ -66,6 +66,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          set -o pipefail
           if [[ "$GITHUB_REF" == refs/tags/* ]]; then
             VERSION="${GITHUB_REF_NAME}"
             TARGET="$GITHUB_REF_NAME"
@@ -84,4 +85,4 @@ jobs:
             - Sable sub-level portal compatibility (portals on sub-levels, players on sub-levels through portals).
 
             Built with Gradle 9.2.1 + ModDevGradle on JDK 21 against MC 1.21.1 / NeoForge 21.1.68." \
-            --latest
+            --latest 2>&1 | tee release.log || { while IFS= read -r line; do echo "::error ::$line"; done < <(tail -n 30 release.log); exit 1; }
