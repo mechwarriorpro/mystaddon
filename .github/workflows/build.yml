@@ -31,11 +31,12 @@ jobs:
       # Post the log tail as a commit comment so failures are visible via the API.
       - name: Report build failure
         if: failure()
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          { echo '#### Gradle build failed — log tail:'; echo '```'; tail -n 150 build.log; echo '```'; } > /tmp/body.md
-          gh api -X POST repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/comments -f body="$(cat /tmp/body.md)"
+          jq -n --arg b "$(tail -n 200 build.log)" '{body: ("#### Gradle build failed — log tail:\n```\n" + $b + "\n```")}' > /tmp/comment.json
+          gh api -X POST repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/comments --input /tmp/comment.json || echo "comment post failed"
 
       - uses: actions/upload-artifact@v4
         if: always()
