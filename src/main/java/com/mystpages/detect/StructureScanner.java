@@ -21,7 +21,9 @@ public final class StructureScanner {
     private StructureScanner() {}
 
     public static List<ResourceLocation> findStructureIds(RegistryAccess registryAccess) {
-        Registry<Structure> registry = registryAccess.lookupOrThrow(Registries.STRUCTURE);
+        // 1.21.1: RegistryAccess.registryOrThrow returns the full Registry (lookupOrThrow
+        // returns only a RegistryLookup in this version).
+        Registry<Structure> registry = registryAccess.registryOrThrow(Registries.STRUCTURE);
         List<ResourceLocation> out = new ArrayList<>();
         for (Structure structure : registry) {
             ResourceLocation id = registry.getKey(structure);
