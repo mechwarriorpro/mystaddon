@@ -55,6 +55,7 @@ neoForge {
 repositories {
     mavenCentral()
     maven { url = 'https://maven.neoforged.net/releases' }
+    maven { url = 'https://maven.parchmentmc.org' }
 }
 
 // NOTE: the addon deliberately avoids compile-time references to Mystcraft Reborn
