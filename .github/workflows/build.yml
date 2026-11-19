@@ -85,4 +85,4 @@ jobs:
             - Sable sub-level portal compatibility (portals on sub-levels, players on sub-levels through portals).
 
             Built with Gradle 9.2.1 + ModDevGradle on JDK 21 against MC 1.21.1 / NeoForge 21.1.68." \
-            --latest 2>&1 | tee release.log || { while IFS= read -r line; do echo "::error ::$line"; done < <(tail -n 30 release.log); exit 1; }
+            --latest 2>&1 | tee release.log || { while IFS= read -r line; do echo "::error ::$line"; done < <(tail -n 30 release.log); { echo '### gh release failed'; echo '```'; tail -n 30 release.log; echo '```'; echo "ls dist:"; ls -la dist/; } >> "$GITHUB_STEP_SUMMARY"; exit 1; }
