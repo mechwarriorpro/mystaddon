@@ -4,11 +4,9 @@ import com.mystpages.AddonConfig;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.levelgen.structure.Structure;
 
 /**
  * Finds modded worldgen structures registered in the structure registry.
@@ -23,20 +21,19 @@ public final class StructureScanner {
     public static List<ResourceLocation> findStructureIds(RegistryAccess registryAccess) {
         // The structure registry is only present in server-side (SERVER_DATA_LOAD) registry
         // accesses; on the client during the configuration phase it is missing entirely.
-        // lookup() returns an Optional here, so an absent registry is simply "no pages".
+        // In 1.21.1 lookup() returns Optional<RegistryLookup<T>> (not a full Registry), so
+        // iterate the holders' keys instead — an absent registry is simply "no pages".
         var lookup = registryAccess.lookup(Registries.STRUCTURE);
         if (lookup.isEmpty()) {
             return List.of();
         }
-        Registry<Structure> registry = lookup.get();
         List<ResourceLocation> out = new ArrayList<>();
-        for (Structure structure : registry) {
-            ResourceLocation id = registry.getKey(structure);
-            if (id == null) continue;
-            if (id.getNamespace().equals("minecraft")) continue; // vanilla structures already generate
-            if (AddonConfig.STRUCTURE_BLACKLIST.get().contains(id.toString())) continue;
+        lookup.get().listElements().forEach(holder -> {
+            ResourceLocation id = holder.key().location();
+            if (id.getNamespace().equals("minecraft")) return; // vanilla structures already generate
+            if (AddonConfig.STRUCTURE_BLACKLIST.get().contains(id.toString())) return;
             out.add(id);
-        }
+        });
         out.sort(Comparator.comparing(ResourceLocation::toString));
         return out;
     }
