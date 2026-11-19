@@ -49,7 +49,9 @@ public final class MystPages {
         PageComponents.init();
 
         modEventBus.addListener(this::onCommonSetup);
-        modEventBus.addListener(this::onRegisterCommands);
+        // RegisterCommandsEvent is fired on the game bus (NeoForge.EVENT_BUS) in
+        // NeoForge 1.21.1 (21.1.x); registering it on the mod bus crashes at startup.
+        NeoForge.EVENT_BUS.addListener(this::onRegisterCommands);
 
         NeoForge.EVENT_BUS.addListener(AgeGenerationBridge::onTagsUpdated);
         NeoForge.EVENT_BUS.addListener(AgeGenerationBridge::onRightClickItem);
