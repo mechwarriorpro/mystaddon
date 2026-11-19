@@ -3,9 +3,13 @@ name: Build
 on:
   push:
     branches: [arena/cd144340-mystaddon]
+    tags: ['v*']
   pull_request:
     branches: [ShadowClanGaming]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -44,3 +48,40 @@ jobs:
           name: mystpages-jar
           path: build/libs/*.jar
           if-no-files-found: warn
+
+  # Creates a GitHub Release with the built jar on v* tags (and on manual dispatch).
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: mystpages-jar
+          path: dist
+
+      - name: Create GitHub Release with jar
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            VERSION="${GITHUB_REF_NAME}"
+            TARGET="$GITHUB_REF_NAME"
+          else
+            VERSION="v$(grep '^mod_version=' gradle.properties | cut -d= -f2)"
+            TARGET="$GITHUB_SHA"
+          fi
+          echo "Releasing $VERSION (target $TARGET)"
+          ls -la dist/
+          gh release create "$VERSION" dist/*.jar \
+            --target "$TARGET" \
+            --title "MystPages $VERSION" \
+            --notes "MystPages $VERSION — NeoForge 1.21.1 addon for Mystcraft Reborn (mystcraft_reborn).
+
+- Detects modded ores, fluids and structures and adds them as pages on Descriptive Books.
+- Sable sub-level portal compatibility (portals on sub-levels, players on sub-levels through portals).
+
+Built with Gradle 9.2.1 + ModDevGradle on JDK 21 against MC 1.21.1 / NeoForge 21.1.68." \
+            --latest
