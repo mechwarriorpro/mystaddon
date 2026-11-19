@@ -21,9 +21,14 @@ public final class StructureScanner {
     private StructureScanner() {}
 
     public static List<ResourceLocation> findStructureIds(RegistryAccess registryAccess) {
-        // 1.21.1: RegistryAccess.registryOrThrow returns the full Registry (lookupOrThrow
-        // returns only a RegistryLookup in this version).
-        Registry<Structure> registry = registryAccess.registryOrThrow(Registries.STRUCTURE);
+        // The structure registry is only present in server-side (SERVER_DATA_LOAD) registry
+        // accesses; on the client during the configuration phase it is missing entirely.
+        // lookup() returns an Optional here, so an absent registry is simply "no pages".
+        var lookup = registryAccess.lookup(Registries.STRUCTURE);
+        if (lookup.isEmpty()) {
+            return List.of();
+        }
+        Registry<Structure> registry = lookup.get();
         List<ResourceLocation> out = new ArrayList<>();
         for (Structure structure : registry) {
             ResourceLocation id = registry.getKey(structure);

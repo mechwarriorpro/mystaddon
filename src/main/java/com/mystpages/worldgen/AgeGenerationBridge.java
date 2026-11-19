@@ -48,8 +48,12 @@ public final class AgeGenerationBridge {
 
     public static void onTagsUpdated(TagsUpdatedEvent event) {
         PageCatalog.refreshTaggedOres();
-        // Structures live in the dynamic (datapack) registry, reachable via the event's RegistryAccess.
-        PageCatalog.scanStructures(event.getRegistryAccess());
+        // Structures live in the dynamic (datapack) registry, which only exists in the
+        // server-side registry access. On the client during the configuration phase
+        // (CLIENT_PACKET_RECEIVED) the structure registry is missing, so skip there.
+        if (event.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD) {
+            PageCatalog.scanStructures(event.getRegistryAccess());
+        }
     }
 
     /** Capture the book's pages right before Mystcraft Reborn consumes the book to create an Age. */
