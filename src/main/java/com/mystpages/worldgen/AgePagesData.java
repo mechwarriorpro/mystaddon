@@ -31,7 +31,7 @@ public final class AgePagesData extends SavedData {
     private final Map<ResourceLocation, Set<Long>> placedChunks = new HashMap<>();
 
     public static AgePagesData get(ServerLevel level) {
-        return level.dataStorage.computeIfAbsent(
+        return level.getDataStorage().computeIfAbsent(
                 new SavedData.Factory<>(AgePagesData::new, AgePagesData::load, null), FILE_NAME);
     }
 

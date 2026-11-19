@@ -14,10 +14,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Portal;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.portal.DimensionTransition;
-import net.minecraft.world.level.portal.Portal;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
