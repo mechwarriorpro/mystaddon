@@ -5,19 +5,23 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.structure.Structure;
 
-/** Finds modded worldgen structures registered in the structure registry. */
+/**
+ * Finds modded worldgen structures registered in the structure registry.
+ *
+ * <p>The structure registry is a <em>dynamic</em> (datapack) registry in 1.21.1 — it is
+ * NOT part of {@code BuiltInRegistries}, so it can only be reached through a
+ * {@link RegistryAccess} (e.g. from {@code TagsUpdatedEvent#getRegistryAccess()}).</p>
+ */
 public final class StructureScanner {
     private StructureScanner() {}
 
-    @SuppressWarnings("unchecked")
-    public static List<ResourceLocation> findStructureIds() {
-        Registry<Structure> registry =
-                (Registry<Structure>) BuiltInRegistries.REGISTRY.get(Registries.STRUCTURE.location());
+    public static List<ResourceLocation> findStructureIds(RegistryAccess registryAccess) {
+        Registry<Structure> registry = registryAccess.lookupOrThrow(Registries.STRUCTURE);
         List<ResourceLocation> out = new ArrayList<>();
         for (Structure structure : registry) {
             ResourceLocation id = registry.getKey(structure);

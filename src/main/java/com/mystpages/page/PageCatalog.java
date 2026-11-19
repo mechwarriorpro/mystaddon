@@ -25,15 +25,31 @@ public final class PageCatalog {
 
     private PageCatalog() {}
 
-    /** Full scan; called during common setup. Safe to call again (idempotent). */
+    /**
+     * Scan of the built-in registries (ores, fluids); called during common setup.
+     * Structure pages are scanned separately via {@link #scanStructures} once a
+     * {@link net.minecraft.core.RegistryAccess} is available (structures live in a
+     * dynamic registry, not in the built-in registries). Safe to call again (idempotent).
+     */
     public static synchronized void scanAll() {
         if (scanned) return;
         CATALOG.put(PageType.ORE, new java.util.ArrayList<>(OreScanner.findOreBlocksByName(AddonConfig.INCLUDE_VANILLA_ORES.get())));
         CATALOG.put(PageType.FLUID, FluidScanner.findFluidIds());
-        CATALOG.put(PageType.STRUCTURE, StructureScanner.findStructureIds());
+        CATALOG.putIfAbsent(PageType.STRUCTURE, List.of());
         scanned = true;
-        MystPages.LOGGER.info("MystPages catalog: {} ore page(s), {} fluid page(s), {} structure page(s)",
-                CATALOG.get(PageType.ORE).size(), CATALOG.get(PageType.FLUID).size(), CATALOG.get(PageType.STRUCTURE).size());
+        MystPages.LOGGER.info("MystPages catalog: {} ore page(s), {} fluid page(s)",
+                CATALOG.get(PageType.ORE).size(), CATALOG.get(PageType.FLUID).size());
+    }
+
+    /**
+     * Scans the dynamic structure registry; called from TagsUpdatedEvent, which carries
+     * a RegistryAccess. Idempotent per registry access instance.
+     */
+    public static synchronized void scanStructures(net.minecraft.core.RegistryAccess registryAccess) {
+        scanAll();
+        CATALOG.put(PageType.STRUCTURE, StructureScanner.findStructureIds(registryAccess));
+        MystPages.LOGGER.info("MystPages catalog: {} structure page(s)",
+                CATALOG.get(PageType.STRUCTURE).size());
     }
 
     /** Adds tag-detected ores after TagsUpdatedEvent; dedupes against name-detected ones. */
